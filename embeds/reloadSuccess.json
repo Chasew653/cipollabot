@@ -1,0 +1,20 @@
+{
+    "embed": {
+        "color": 321024,
+        "footer": {
+            "text": "BrotBot • Success"
+        },
+        "fields": [
+            {
+                "name": "Console Log:",
+                "value": "```diff\n+ No Errors Found\n+ Restarting process...\n+ Successfully restarted process\n+ Successfully reloaded command\n```",
+                "inline": false
+            }
+        ],
+        "title": "Reload Success!",
+        "description": "Reloaded the above command succesfullly",
+        "thumbnail": {
+            "url": "https://media.discordapp.net/attachments/729057661689135258/737475511202349127/check-removebg-preview.png"
+        }
+    }
+}

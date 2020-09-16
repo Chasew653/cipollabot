@@ -1,0 +1,41 @@
+{
+    "embed": {
+        "color": 16711680,
+        "title": "Coronavirus Info",
+        "description": "Here is our latest info on the COVID-19 Crisis and Pandemic:",
+        "footer": {
+            "text": "Brothaus Coronavirus Info Team - *Prone to change"
+        },
+        "thumbnail": {
+            "url": "https://media.discordapp.net/attachments/608162229820325890/734170145286782996/c0481846-wuhan_novel_coronavirus_illustration-spl.png?width=1053&height=702"
+        },
+        "fields": [
+            {
+                "name": "Hotspots*",
+                "value": "1: California; approx. 413k Case count\n\n2: Florida; approx. 374k Case count\n\n3: Texas; approx. 351k Case count",
+                "inline": false
+            },
+            {
+                "name": "Lowspots*",
+                "value": "1: Marshall Islands; 0 Case count\n\n2: Palau; 0 Case count\n\n3: American Samoa; 0 Case count\n",
+                "inline": false
+            },
+            {
+                "name": "Latest News*",
+                "value": "Live Updates: https://www.nytimes.com/2020/07/23/world/coronavirus-covid-19.html\n\nUSA hits DOUBLE case count in two weeks:\nhttps://www.washingtonpost.com/nation/2020/07/23/covid-live-updates-us/\n\nCDC Live updates:\nhttps://www.cdc.gov/coronavirus/2019-ncov/whats-new-all.html",
+                "inline": false
+            },
+            {
+                "name": "Stats (World)*",
+                "value": "Cases ≈ 15 Mil.\n\nRecoveries ≈ 9 Mil.\n\nDeaths ≈\t620k ",
+                "inline": false
+            },
+            {
+                "name": "Statistic Graphs*",
+                "value": "--",
+                "inline": false
+            }
+        ],
+        "timestamp": "2020-07-23T16:00:00.100"
+    }
+}

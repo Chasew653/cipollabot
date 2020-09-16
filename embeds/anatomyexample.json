@@ -1,0 +1,38 @@
+{
+    "embed": {
+        "title": "This is what an embed title looks like, it tells everybody what the embed is all about",
+        "description": "This is what the description of an embed looks like, which describes the embed itself (Also used for body text if it's a standalone embed without links)",
+        "author": {
+            "name": "< That's an author icon, and this is an author",
+            "icon_url": "https://media.discordapp.net/attachments/608162229820325890/736432725690417242/panemflag.png?width=663&height=703"
+        },
+        "image": {
+            "url": "https://media.discordapp.net/attachments/608162229820325890/736436497544118392/imageExample.png"
+        },
+        "thumbnail": {
+            "url": "https://media.discordapp.net/attachments/608162229820325890/736437941034811392/thumbnailExample.png"
+        },
+        "footer": {
+            "text": "This is a footer, and to the left of this is the footer icon",
+            "icon_url": "https://media.discordapp.net/attachments/608162229820325890/736432725690417242/panemflag.png?width=663&height=703"
+        },
+        "timestamp": "2020-07-24T21:22:15.011",
+        "fields": [
+            {
+                "name": "This is a field!",
+                "value": "This is a field Value",
+                "inline": false
+            },
+            {
+                "name": "So is this :smile:",
+                "value": "Also known as a Description",
+                "inline": false
+            },
+            {
+                "name": "This too! :snail:",
+                "value": "You can add 25 of these",
+                "inline": false
+            }
+        ]
+    }
+}
