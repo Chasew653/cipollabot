@@ -1,0 +1,20 @@
+{
+    "embed": {
+        "title": "Oh no! That's an error!",
+        "description": "Please read the error message to know what the exact error is, if there is no error message, contact <@554404024422760458>",
+        "color": 16711680,
+        "footer": {
+            "text": "BrotBot • Error"
+        },
+        "fields": [
+            {
+                "name": "Console Log:",
+                "value": "```diff\n- Errors Found\n- Ending process...\n- Successfully ended process before code was affected\n```",
+                "inline": false
+            }
+        ],
+        "thumbnail": {
+            "url": "https://media.discordapp.net/attachments/730534423543545978/737474845637345414/cancel-removebg-preview.png"
+        }
+    }
+}

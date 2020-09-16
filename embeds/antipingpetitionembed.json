@@ -1,0 +1,17 @@
+{
+    "embed": {
+        "footer": {
+            "text": "From the Anti-Ping group (APG)"
+        },
+        "color": 16711680,
+        "title": "PETITION TO STOP JACOB'S PINGS!",
+        "description": "Jacob pings about 5 times EVERY. DAY. Please react with :thumbsup: to show your support for the ANTI PING PETITION. If we get enough support we can ALL suppress pings until he PROMISES to stop.\n",
+        "fields": [
+            {
+                "name": "-",
+                "value": "PLEASE REACT!",
+                "inline": true
+            }
+        ]
+    }
+}

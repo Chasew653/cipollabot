@@ -1,0 +1,32 @@
+{
+    "embed": {
+        "fields": [
+            {
+                "name": "Soon",
+                "value": "Soon is sooner than will",
+                "inline": false
+            },
+            {
+                "name": "Will",
+                "value": "Will is after just",
+                "inline": false
+            },
+            {
+                "name": "Just",
+                "value": "Just is the past-tense of will",
+                "inline": false
+            }
+        ],
+        "title": "Soon, Will, and Just",
+        "color": 7511,
+        "description": "A story of love and intrigue...",
+        "footer": {
+            "text": "Made by The Grammar Association"
+        },
+
+        "image": {
+            "url": "https://media.discordapp.net/attachments/565740123518533652/736030863447556207/unknown.png"
+        }
+
+    }
+}

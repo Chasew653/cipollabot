@@ -1,0 +1,226 @@
+Example Embed:
+const testembed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+	.setTitle('Some title')
+	.setURL('https://discord.js.org/')
+	.setAuthor('Some name', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
+	.setDescription('Some description here')
+	.setThumbnail('https://i.imgur.com/wSTFkRM.png')
+	.addFields(
+		{ name: 'Regular field title', value: 'Some value here' },
+		{ name: '\u200B', value: '\u200B' },
+		{ name: 'Inline field title', value: 'Some value here', inline: true },
+		{ name: 'Inline field title', value: 'Some value here', inline: true },
+	)
+	.addField('Inline field title', 'Some value here', true)
+	.setImage('https://i.imgur.com/wSTFkRM.png')
+	.setTimestamp()
+	.setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+
+
+Message setup:
+module.exports = {
+	name: 'command',
+	description: 'describe it',
+	execute(message, args) {
+        whatevercode
+    }
+};
+
+const { command } = require('./index.js');
+module.exports = {
+	name: 'help',
+	description: 'Get help with commands',
+	execute(message, args) {}
+};
+
+
+const fs = require('fs');
+const Discord = require('discord.js');
+const { prefix, token } = require('./config.json');
+const profanities = require('profanities')
+
+const client = new Discord.Client();
+client.commands = new Discord.Collection();
+
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	client.commands.set(command.name, command);
+}
+
+const cooldowns = new Discord.Collection();
+
+
+client.once('ready', () => {
+	console.log('Ready!');
+});
+
+client.on('message', message => {
+	for (x = 0; x < profanities.length; x++) {
+		if(message.channel.id == '729057661689135258') {
+			break;
+		} else if(message.content.toUpperCase() == profanities[x].toUpperCase()) {
+			message.author.send("Please don't say things like that on this server!");
+			message.delete();
+			return;
+		}
+	}
+
+
+	if (!message.content.startsWith(prefix) || message.author.bot) return;
+	const args = message.content.slice(prefix.length).trim().split(/ +/);
+	const commandName = args.shift().toLowerCase();
+
+
+	if (!client.commands.has(commandName)) return;
+
+	const command = client.commands.get(commandName);
+
+	if (command.args && !args.length) {
+		let reply = `You didn't provide any arguments, ${message.author}!`;
+		if (command.usage) {
+			reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+		}
+
+		return message.channel.send(reply);
+	}
+	try {
+		command.execute(message, args);
+	    } catch (error) {
+				console.error(error);
+				message.reply('there was an error trying to execute that command!');
+			}
+});
+
+client.login(token);
+
+--------------
+module.exports = {
+	name: 'search',
+    description: 'Search for a youtube video',
+    args: '<what to search>',
+
+	execute(client, message, args, ops) {
+        search(args, function(err, res){
+            if (err) return message.channel.send(`Something's not right here`)
+
+            let videos = res.videos.slice(0, 10);
+
+            let resp = '';
+            for (var i in videos) {
+                resp += `**[${parseInt(i)+1}]:** \`${videos[i].title}\`\n`;
+
+            }
+
+            resp += `\n**Choose a number bewtween \`1-${videos.length}\``;
+
+            message.channel.send(resp);
+
+            const filter = m => !isNaN(m.content) && m.content < videos.length+1 && m.content > 0;
+            const collector = message.channel.createmessageCollector(filter);
+
+            collector.videos = videos;
+            collector.once('collect', function(m) {
+
+                let commandFile = require(`./play.js`);
+                commandFile.run(client, message, [this.videos[parseInt(m.content)-1].url], ops);
+
+            });
+        });
+    }
+
+}
+
+
+
+
+-------- Search command
+const {google_api_key} = require('./config.json');
+const YouTube = require('simple-youtube-api');
+const youtube = new YouTube(google_api_key);
+
+module.exports = {
+	name: 'search',
+    description: 'Search for a youtube video',
+    args: '<what to search>',
+
+	async execute(message, args) {
+        try {
+            const video =  youtube.getVideo(url);
+        } catch (error) {
+            try {
+                var videos = await youtube.searchVideos(args[0, 10]);
+                var videoinfo = await youtube.getVideoByID(videos[1].id);
+            } catch (err) {
+                console.log(err);
+                return message.channel.send("I couldn't find that video?")
+            }
+        }
+        return console.log(videoinfo);
+    }
+}
+
+
+
+
+
+
+
+collector ex: let requestedMonthsLen
+
+
+gthAdded = calendarYearMonths.slice(startMonthUsable, endMonthUsable).reduce((a, v) => a + v);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  if (!message.guild) return;
+
+  if (message.content.startsWith('!ban')) {
+    const user = message.mentions.users.first();
+    if (user) {
+      const member = message.guild.member(user);
+      if (member) {
+        member
+          .ban({
+            reason: 'They were bad!',
+          })
+          .then(() => {
+            message.reply(`Successfully banned ${user.tag}`);
+          })
+          .catch(err => {
+            message.reply('I was unable to ban the member');
+            console.error(err);
+          });
+      } else {
+        message.reply("That user isn't in this guild!");
+      }
+    } else {
+      message.reply("You didn't mention the user to ban!");
+    }
+  }
