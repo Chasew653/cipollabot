@@ -1,0 +1,5 @@
+#Ignore node
+node_modules/
+
+#ignore config
+config.json
