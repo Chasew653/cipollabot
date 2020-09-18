@@ -5,7 +5,6 @@ const { on } = require('../../models/cmdInfo.js');
 let beta = true;
 const fetch = require('node-fetch');
 
-
 function isInBeta(beta) {
     switch(beta) {
         case true:
@@ -155,20 +154,27 @@ module.exports = {
             }
         } else if(args[0] === 'discord') {
           if(args[1] === 'get') {
-            let query = args[2];
-            let src = args[3];
+            let getArray = message.content.replace(`${message.prefix}docs discord get `, "").split(" | ");
+            let query = getArray[0];
+            let src = getArray[1];
             if(!src || !query) {
-              message.channel.send("You need a query and a source.\nValid sources are `stable`, `master`, `commando`, `rpc`, `akairo`, `akairo-master` and `collection`");
+              return message.channel.send("You need a query and a source.\nValid sources are `stable`, `master`, `commando`, `rpc`, `akairo`, `akairo-master` and `collection`\nExample Command: docs discord get voice channel disconnect | master\n(Command format is \"docs discord get <your query (Spaces allowed)> | <source>\")");
             }
-            let queryUrl = `https://djsdocs.sorta.moe/v2/embed?src=${src}&q=${query.replace('#', '.')}`
+            let queryUrl = `https://djsdocs.sorta.moe/v2/embed?src=${src}&q=${query}`
             let settings = { method: "Get" };
             fetch(queryUrl, settings).then(res => res.json()).then((json) => {
+              if(!json) return message.channel.send("It seems that the specific request couldn't be found....")
+              if(json.status) {
+                return message.channel.send(`\`${json.status} ERROR\`\n${json.message}`);
+              }
+
               let finEmbed = new Discord.MessageEmbed()
                 .setTitle("Results:")
                 .setAuthor(json.author.name, json.author.icon_url.toString(), json.author.url.toString())
                 .setColor(json.color)
                 .setDescription(json.description)
               message.channel.send(finEmbed);
+
             });
           } else {
             message.channel.send("You cannot do that with the discord.js documentation.");
@@ -176,6 +182,7 @@ module.exports = {
 
 
 
+        } else if(args[0] === "ref") {
         }
     }
 }

@@ -35,6 +35,7 @@ const client = new Discord.Client({partials: ['REACTION']});
 client.commands = new Discord.Collection();
 client.commandFilePaths = new Discord.Collection();
 client.queue = new Map();
+let hasLiked = new Discord.Collection();
 
 async function commandSortDecoder() {
 	const commandFiles = await recursive('./commands');
@@ -165,11 +166,12 @@ client.on('message', async (message) => {
 
 client.on('messageReactionAdd', async (reaction, user) => {
 	if(user.bot) return;
+	if(hasLiked.has(user.id)) return;
 	if (reaction.message.partial) await reaction.message.fetch();
 	switch(reaction.message.channel.id) {
 		case '756224009560916089':
-		if(user.bot) return;
 			reaction.message.guild.channels.cache.find(c => c.id === "750889039783264256").send(`${reaction.message.guild.members.cache.find(m => m.id === user.id).nickname} liked ${reaction.message.member.nickname}'s post in ${reaction.message.channel}`);
+			hasLiked.set(user.id, true);
 			break;
 		default:
 			break;
