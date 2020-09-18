@@ -3,6 +3,8 @@ const cM = require('../../models/cmdInfo.js');
 const Discord = require('discord.js');
 const { on } = require('../../models/cmdInfo.js');
 let beta = true;
+const fetch = require('node-fetch');
+
 
 function isInBeta(beta) {
     switch(beta) {
@@ -59,7 +61,7 @@ module.exports = {
                     //Update changes
                     if(args[3] === "tags"){
                         //If tags is undefined, set the entire tag vallue, otherwise, append it
-                        cmdDoc.tags == "undefined" ? cmdDoc.tags = args[4] : cmdDoc.tags = cmdDoc.tags + " " + args[4]; 
+                        cmdDoc.tags == "undefined" ? cmdDoc.tags = args[4] : cmdDoc.tags = cmdDoc.tags + " " + args[4];
                     } else {
                         cmdDoc[3] = args.slice(4).join(' ');
                     }
@@ -150,7 +152,30 @@ module.exports = {
                     message.channel.send("Ended the process!");
                 });
 
-            } 
+            }
+        } else if(args[0] === 'discord') {
+          if(args[1] === 'get') {
+            let query = args[2];
+            let src = args[3];
+            if(!src || !query) {
+              message.channel.send("You need a query and a source.\nValid sources are `stable`, `master`, `commando`, `rpc`, `akairo`, `akairo-master` and `collection`");
+            }
+            let queryUrl = `https://djsdocs.sorta.moe/v2/embed?src=${src}&q=${query.replace('#', '.')}`
+            let settings = { method: "Get" };
+            fetch(queryUrl, settings).then(res => res.json()).then((json) => {
+              let finEmbed = new Discord.MessageEmbed()
+                .setTitle("Results:")
+                .setAuthor(json.author.name, json.author.icon_url.toString(), json.author.url.toString())
+                .setColor(json.color)
+                .setDescription(json.description)
+              message.channel.send(finEmbed);
+            });
+          } else {
+            message.channel.send("You cannot do that with the discord.js documentation.");
+          }
+
+
+
         }
-    } 
+    }
 }
