@@ -140,7 +140,6 @@ module.exports = {
                         .setFooter("This poll was created by " + message.author.username + ", react with '🛑' to close the poll (Only " + message.author.username + " can, since they're the creator)")
 
                     pollMessage.edit(pollContent, pollScoreEmbed)
-                    console.log('Custom emojis work')
                     break;
                 case "X_":
                     pollScore = pollScore + 1;

@@ -154,12 +154,14 @@ module.exports = {
             }
         } else if(args[0] === 'discord') {
           if(args[1] === 'get') {
+            message.channel.startTyping();
             let getArray = message.content.replace(`${message.prefix}docs discord get `, "").split(" | ");
             let query = getArray[0];
             let src = getArray[1];
             if(!src || !query) {
               return message.channel.send("You need a query and a source.\nValid sources are `stable`, `master`, `commando`, `rpc`, `akairo`, `akairo-master` and `collection`\nExample Command: docs discord get voice channel disconnect | master\n(Command format is \"docs discord get <your query (Spaces allowed)> | <source>\")");
             }
+            message.channel.startTyping();
             let queryUrl = `https://djsdocs.sorta.moe/v2/embed?src=${src}&q=${query}`
             let settings = { method: "Get" };
             fetch(queryUrl, settings).then(res => res.json()).then((json) => {
@@ -167,7 +169,7 @@ module.exports = {
               if(json.status) {
                 return message.channel.send(`\`${json.status} ERROR\`\n${json.message}`);
               }
-
+              message.channel.stopTyping();
               let finEmbed = new Discord.MessageEmbed()
                 .setTitle("Results:")
                 .setAuthor(json.author.name, json.author.icon_url.toString(), json.author.url.toString())
@@ -184,5 +186,6 @@ module.exports = {
 
         } else if(args[0] === "ref") {
         }
+        message.channel.stopTyping();
     }
 }
