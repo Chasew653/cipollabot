@@ -1,38 +1,6 @@
 const Discord = require("discord.js");
 const fetch = require('node-fetch');
 
-class BasicNewsArticleBuilder {
-    constructor(url, wantsPage, data) {
-        this.url = url;
-        this.wantsPage = wantsPage;
-        this.data = data;
-    }
-    render() {
-        let queryUrl = this.url;
-        let settings = { method: "Get" };
-        fetch(queryUrl, settings).then(res => res.json()).then((json) => {
-            let articleFinalSend = ""
-            if(!json) articleFinalSend = "It seems that the specific request couldn't be found....";
-            let article = null;
-            if(this.wantsPage) {
-                article = json.articles[this.data[1]];
-            } else {
-                article = json.articles[0];
-            }
-            articleFinalSend = new Discord.MessageEmbed()
-                .setAuthor(`Results for: ${this.data[0]}`, "https://images.apilist.fun/news_api.png")
-                .setTitle(article.title)
-                .setURL(article.url)
-                .setThumbnail(article.urlToImage)
-                .setDescription(article.description)
-                .setColor("AQUA")
-                .setTimestamp(article.publishedAt)
-                .setFooter(`From: ${article.source.name} | Out of: ${json.totalResults} results`)
-            this.finalArticle = articleFinalSend
-        });
-        return this.finalArticle;
-    }
-}
 
 module.exports = {
     name: "news",
@@ -49,7 +17,7 @@ module.exports = {
         if(data[1]) wantsPage = true;
         let publication = args[0];
         let query = data[0];
-        if(!validPublications.includes(publication)) return message.channel.send(invalidThings.publication);
+        if(!validPublications.includes(publication.toUpperCase())) return message.channel.send(invalidThings.publication);
         if(!query) return message.channel.send(invalidThings.query);
         if(publication.toUpperCase() === "BN") {
             let queryUrl = `http://newsapi.org/v2/everything?q=${query}&sortBy=relevancy&apiKey=db6ab79ac54343a1b29faa04df6ae4a2`;
@@ -89,14 +57,19 @@ module.exports = {
                 } else {
                     article = json.response.docs[0];
                 }
+
+                let mediaLink = null;
+                if(!article.multimedia[0]) mediaLink = `https://aerglos.is-inside.me/KDJcmtfZ.png`;
+                if(article.multimedia[0]) mediaLink = `https://static01.nyt.com/${article.multimedia[0].url}`;
+                let title = article.headline.main;
                 articleFinalSend = new Discord.MessageEmbed()
                     .setAuthor(`Results for: ${data[0]}`, "https://aerglos.is-inside.me/Fa4r4h1V.png")
-                    .setTitle(article.abstract)
+                    .setTitle(title)
                     .setURL(article.web_url)
-                    .setThumbnail(`https://static01.nyt.com/${article.multimedia[0].url}`)
-                    .setDescription(article.lead_paragraph)
+                    .setThumbnail(mediaLink)
+                    .setDescription(article.abstract)
                     .setColor("BLACK")
-                    .setFooter(`From: ${article.source} | Out of: ${article.print_page} pages`)
+                    .setFooter(`${article.byline.original} | Out of: ${article.print_page} pages`)
                 message.channel.send(articleFinalSend);
                 message.channel.stopTyping();
                     
