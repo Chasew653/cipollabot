@@ -184,8 +184,52 @@ module.exports = {
 
 
 
-        } else if(args[0] === "ref") {
+        } else if(args[0] === "mdn") {
+            if(args[1].toUpperCase() !== "GET") return message.channel.send("You cannot do that with the MDN docs");
+
+            message.channel.startTyping();
+            let getArray = message.content.replace(`${message.prefix}docs mdn get `, "").split(" | ");
+            let query = getArray[0];
+            let pgNum = 1;
+            if(getArray[1]) {
+                pgNum = getArray[1];
+            }
+            let queryUrl = `https://developer.mozilla.org/api/v1/search/en-US?page=${pgNum}&q=${query}&highlight=false`;
+
+            let settings = { method: "Get" }
+            
+
+            fetch(queryUrl, settings).then(res => res.json()).then((json) => {
+                try {
+                    let resultsEmbed = new Discord.MessageEmbed()
+                        .setAuthor(`Results for: ${query}`, 'https://cdn.discordapp.com/emojis/752316461061767170.png?v=1')
+                        .setTitle("MDN Docs Search")
+                        .setURL('https://developer.mozilla.org/en-US/docs/Web/Reference')
+                        .setThumbnail('https://developer.mozilla.org/static/img/opengraph-logo.72382e605ce3.png')
+                        .addFields(
+                            {name: `${json.documents[0].title}`, value: `${json.documents[0].excerpt}\n[LINK](https://developer.mozilla.org/en-US/docs/${json.documents[0].slug})`},
+                            {name: `${json.documents[1].title}`, value: `${json.documents[1].excerpt}\n[LINK](https://developer.mozilla.org/en-US/docs/${json.documents[1].slug})`},
+                            {name: `${json.documents[2].title}`, value: `${json.documents[2].excerpt}\n[LINK](https://developer.mozilla.org/en-US/docs/${json.documents[2].slug})`},
+                            {name: `${json.documents[3].title}`, value: `${json.documents[3].excerpt}\n[LINK](https://developer.mozilla.org/en-US/docs/${json.documents[3].slug})`}
+                        )
+                        .setColor("BLUE")
+                        .setFooter(`Out of ${json.pages} pages. Use append " | <pageNum>" to the command for a specific page`)
+                        .setTimestamp()
+                    message.channel.send(resultsEmbed);
+                } catch (error) {
+                    message.channel.stopTyping();
+                    return message.channel.send("No results found.")
+                }
+            });
+
         }
         message.channel.stopTyping();
+
+
+
+
+
+
+
     }
 }

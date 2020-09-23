@@ -13,24 +13,6 @@ const recursive = require('recursive-readdir');
 const { info } = require('console');
 
 
-
-let profTest = /.{0,4}f.{0,4}u.{0,4}c.{0,4}k.{0,6}|.{0,6}n.{0,4}i.{0,4}[gb]{2,}.{0,6}|.{0,4}c.{0,4}u.{0,4}n.{0,4}t.{0,4}|.{0,4}[fp].{0,4}[ha].{0,4}[g].{0,6}/gi;
-
-function isAuth(message) {
-	let isAuth = true;
-
-	profTest.test(message.content) ? isAuth = false : isAuth = true;
-
-
-	let cleanMsg = message.content.replace(profTest, "heck");
-
-	if(message.channel.type === "dm" || message.channel.id === "755857960433090600" || message.channel.id === "750892065822474331") {isAuth = true};
-
-
-	return [isAuth, cleanMsg];
-}
-
-
 const client = new Discord.Client({partials: ['REACTION']});
 client.commands = new Discord.Collection();
 client.commandFilePaths = new Discord.Collection();
@@ -72,8 +54,8 @@ client.on('message', async (message) => {
 	if(message.channel.id === "756224009560916089") return message.react('756292300778504323').then(() => message.react('756292300816253009'));
 
 	if(message.author.bot) return;
-	if(message.content.startsWith("?")) {
-		let bit = message.content.replace("?", "").replace(" ", "-");
+	if(message.content.startsWith("~")) {
+		let bit = message.content.replace("~", "").replace(" ", "-");
 		try {
 			client.infoBit = require(`./infoBits/${bit}`);
 		} catch (error) {
@@ -88,8 +70,6 @@ client.on('message', async (message) => {
 		}
 		return;
 	}
-
-	if(!isAuth(message)[0]) return message.delete().then(() => client.channels.cache.get('751171817573580971').send(`User ${message.author} said:\n${message.content}`)).then(() => message.reply("no don't"));
 
 	if(message.channel.type === 'text') {
 		let gPDoc = await gM.findOne({id: message.guild.id});
