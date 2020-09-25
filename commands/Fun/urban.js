@@ -18,6 +18,7 @@ module.exports = {
 
         const trim = (str, max) => ((str.length > max) ? `${str.slice(0, max - 3)}...` : str);
         const [answer] = list;
+        if(!answer) return message.channel.send("No results found!")
 
         const embed = new Discord.MessageEmbed()
             .setColor(`#${Math.floor(Math.random()*16777215).toString(16)}`)

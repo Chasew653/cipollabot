@@ -82,15 +82,7 @@ async function correctAnswerGet(userId, userName, m) {
 
         theUserModel.correctAns = theUserModel.correctAns + 1;
         await theUserModel.save();
-    } else if(userModel) {
-        userModel.correctAns = userModel.correctAns + 1;
-        const trophyObj = new TrophyFinder(userModel.score.toString());
-        if(trophyObj.getTrophy()[0]) {
-            message.channel.send(trophyObj.getTrophy()[1])
-        } 
-        await userModel.save();
     }
-
 
 }
 
@@ -98,17 +90,24 @@ async function realCorrectAns(userId, score, userName, m) {
     const userModel = await triviaSM.findOne({id: userId}).exec();
     if(!userModel) {
         const newUserModel = new triviaSM({id: userId, score: 0, correctAns: 0, username: userName, saved: {}});
-        
         newUserModel.score = score;
         newUserModel.correctAns = 1;
         await newUserModel.save();
     } else {
+        const oldScore = userModel.score;
         userModel.correctAns++;
-        userModel.score = userModel.score + score;
+        userModel.score = oldScore + score;
         await userModel.save();
+        if(userModel.score !== oldScore + score) {
+            userModel.score = oldScore + score;
+            await userModel.save();
+        }
     }
     const finalUserModel1 = await triviaSM.findOne({id: userId}).exec();
-    
+    const trophyCheckerObj = new TrophyFinder(finalUserModel1.score);
+    if(trophyCheckerObj.getTrophy()[0]) {
+        message.channel.send(trophyCheckerObj.getTrophy()[1])
+    }
 }
 
 module.exports = {
@@ -117,31 +116,29 @@ module.exports = {
     usage: "[myPoints]",
     cooldown: 5,
     async execute(message, args) {
-        if(args[0] === "myPoints") {
-            triviaSM.findOne({id: message.author.id}).then(res => {
-                if(!res) {
-                    message.channel.send(`You need to answer questions to earn points!`)
-                } else {
-                    message.channel.send(`You have ${res.score} total points.`)
+        if(args[0]) {
+            if(args[0].toLowerCase() === "mypoints") {
+                triviaSM.findOne({id: message.author.id}).then(res => {
+                    if(!res) {
+                        message.channel.send(`You need to answer questions to earn points!`)
+                    } else {
+                        message.channel.send(`You have ${res.score} total points.`)
+                    }
+                })
+                return;
+            } else if(args[0] === 'gamemaster' && message.author.id === "554404024422760458") {
+                switch(args[1]) {
+                    case 'add':
+                        addScore(message.mentions.users.first().id, args[3], message.mentions.users.first().username);
+                        message.channel.send(`Added ${args[3]} points to their score`);
+                        break;
+                    case 'sub':
+                        subScore(message.mentions.users.first().id, args[3], message.mentions.users.first().username);
+                        message.channel.send(`Subtracted ${args[3]} points from their score`);
+                        break;
                 }
-            })
-            return;
-        } else if(args[0] === 'gamemaster' && message.author.id === "554404024422760458") {
-            switch(args[1]) {
-                case 'add':
-                    addScore(message.mentions.users.first().id, args[3], message.mentions.users.first().username);
-                    message.channel.send(`Added ${args[3]} points to their score`);
-                    break;
-                case 'sub':
-                    subScore(message.mentions.users.first().id, args[3], message.mentions.users.first().username);
-                    message.channel.send(`Subtracted ${args[3]} points from their score`);
-                    break;
-                case 'correct':
-                    correctAnswerGet(message.mentions.users.first().id, message.mentions.users.first().username);
-                    message.channel.send(`Added a correct answer to their score`);
-                    break;
+                return;
             }
-            return;
         }
         if(message.channel.id !== "758186150497353739" && message.channel.id !== "758394060599197827") return message.reply(`Use trivia commands in <#758186150497353739>`)
         let queryUrl = "https://jservice.io/api/random"
