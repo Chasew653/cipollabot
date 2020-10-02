@@ -10,7 +10,8 @@ const mongoose = require('mongoose');
 const gM = require('./models/guildsModel.js')
 mongoose.connect('mongodb://localhost/guildData', {useNewUrlParser: true, useUnifiedTopology: true});
 const recursive = require('recursive-readdir');
-const { info } = require('console');
+const path = require('path');
+const plM = require('./models/playerModel.js');
 
 
 const client = new Discord.Client({partials: ['REACTION']});
@@ -40,6 +41,7 @@ for (const file of commandFiles) {
 	client.commands.set(command.name, command);
 }
 */
+
 const cooldowns = new Discord.Collection();
 
 
@@ -51,6 +53,11 @@ client.once('ready', () => {
 });
 
 client.on('message', async (message) => {
+	let authorInGame = await plM.findOne({id: message.author.id});
+	if(!authorInGame) {
+		let newAuthor = new plM({name: message.author.username, id: message.author.id, bal: 100, items: null, stores: null});
+		await newAuthor.save();
+	}
 	if(message.channel.id === "756224009560916089") return message.react('756292300778504323').then(() => message.react('756292300816253009'));
 
 	if(message.author.bot) return;
@@ -82,7 +89,7 @@ client.on('message', async (message) => {
 		message.gSaves = null;
 	};
 
-	const args = message.content.slice(message.prefix.length).trim().split(/ +/);
+	const args = message.content.slice(message.prefix.length).trim().split(' ');
 	const commandName = args.shift().toLowerCase();
 
 	if(message.channel.id === "754426779996782633") {

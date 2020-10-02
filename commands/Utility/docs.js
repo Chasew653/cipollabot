@@ -4,6 +4,8 @@ const Discord = require('discord.js');
 const { on } = require('../../models/cmdInfo.js');
 let beta = true;
 const fetch = require('node-fetch');
+const flagHandler = require('../../flagLib/mainLib');
+
 
 function isInBeta(beta) {
     switch(beta) {
@@ -31,6 +33,8 @@ module.exports = {
     args: true,
     usage: "<docsname> <get/add/edit> <name> <attribute> <newAttribute>",
     async execute(message, args, client) {
+        const flagMain = new flagHandler.Flags(args);
+
         //Find the requested minecraft command info document:
         let cmdDoc = await cM.findOne({title: args[2]}).exec().then(res => res);
 
@@ -86,13 +90,13 @@ module.exports = {
                 };
 
                 let filter = m => message.author == m.author;
-                let buildCollecor = message.channel.createMessageCollector(filter, {time: "60000"});
+                let buildCollector = message.channel.createMessageCollector(filter, {time: "60000"});
                 let onPart = 1;
                 let addingObject = {};
                 let finishedEarly = false;
                 message.channel.send("Starting the building process...");
                 message.channel.send("Type !!stop to stop at any time, start with the command name (/commandName):")
-                buildCollecor.on('collect', async m => {
+                buildCollector.on('collect', async m => {
                     if(m.content.includes("!!stop")) {
                         message.channel.send("Ending process....");
                         buildCollecor.stop();
@@ -147,7 +151,7 @@ module.exports = {
                         onPart = onPart + 1;
                     }
                 });
-                buildCollecor.on("end", collected => {
+                buildCollector.on("end", collected => {
                     message.channel.send("Ended the process!");
                 });
 
@@ -155,14 +159,22 @@ module.exports = {
         } else if(args[0] === 'discord') {
           if(args[1] === 'get') {
             message.channel.startTyping();
-            let getArray = message.content.replace(`${message.prefix}docs discord get `, "").split(" | ");
-            let query = getArray[0];
-            let src = getArray[1];
-            if(!src || !query) {
-              return message.channel.send("You need a query and a source.\nValid sources are `stable`, `master`, `commando`, `rpc`, `akairo`, `akairo-master` and `collection`\nExample Command: docs discord get voice channel disconnect | master\n(Command format is \"docs discord get <your query (Spaces allowed)> | <source>\")");
+            let getArray = message.content.replace(`${message.prefix}docs discord get `, "");
+            let query = getArray;
+            if(!query) query = args.splice(3);
+            let src;
+            let currentFlagObj = flagMain.getObj();
+            if(!currentFlagObj) {
+                src = "stable";
+            } else {
+                src = currentFlagObj.src;
+                query = getArray.replace(`--src=(${currentFlagObj.src})`, "");
             }
-            message.channel.startTyping();
-            let queryUrl = `https://djsdocs.sorta.moe/v2/embed?src=${src}&q=${query}`
+            if(!src) src = "stable";
+            if(!query) {
+              return message.channel.send("You need a query.");
+            }
+            let queryUrl = `https://djsdocs.sorta.moe/v2/embed?src=${src.toLowerCase()}&q=${query}`
             let settings = { method: "Get" };
             fetch(queryUrl, settings).then(res => res.json()).then((json) => {
               if(!json) return message.channel.send("It seems that the specific request couldn't be found....")
@@ -187,7 +199,7 @@ module.exports = {
         } else if(args[0] === "mdn") {
             if(args[1].toUpperCase() !== "GET") return message.channel.send("You cannot do that with the MDN docs");
 
-            message.channel.startTyping();
+            await message.channel.startTyping();
             let getArray = message.content.replace(`${message.prefix}docs mdn get `, "").split(" | ");
             let query = getArray[0];
             let pgNum = 1;
