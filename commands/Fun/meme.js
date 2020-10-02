@@ -38,9 +38,10 @@ module.exports = {
                     //Makes and sends a new embed with the info of the image it collected
                     const MemeEmbed = new Discord.MessageEmbed()
                         .setTitle('Fresh memé:')
+                        .setURL(url)
                         .setImage(url)
                         .setColor('#37d461')
-                        .setFooter('If it\'s a video/doesn\'t load, copy the link and paste it into a browser')
+                        .setFooter('If it\'s a video/doesn\'t load, press the title link')
                     message.channel.send(MemeEmbed);
 
             });
